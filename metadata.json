@@ -1,0 +1,5 @@
+{
+  "name": "HK Walk Planner Pro",
+  "description": "一個現代化的React應用程式，使用Gemini API規劃香港的步行路線。用戶可以設定起點、終點和休息距離，應用程式會在地圖上顯示兩條建議路線及休息點。",
+  "requestFramePermissions": []
+}
