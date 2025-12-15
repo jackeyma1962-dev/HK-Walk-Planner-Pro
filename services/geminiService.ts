@@ -93,8 +93,12 @@ export const getWalkingRoutes = async (
         }
     });
 
-    const jsonText = response.text.trim();
-    const routes: Route[] = JSON.parse(jsonText);
+    const jsonText = response.text;
+    if (!jsonText) {
+      throw new Error("AI 未能提供有效的路線資料。");
+    }
+
+    const routes: Route[] = JSON.parse(jsonText.trim());
     
     if (!Array.isArray(routes) || routes.length === 0) {
       throw new Error("AI 未能提供有效的路線。");
