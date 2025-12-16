@@ -1,13 +1,22 @@
 <!doctype html>
+<!-- 
+  PROJECT: 香港智能步行路線規劃 (HK Smart Walking Route Planner)
+  VERSION: 1.1 (FIXED)
+  DESCRIPTION: 這是 React 應用程式的主要 HTML 進入點。
+-->
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>香港智能步行路線規劃</title>
+    
+    <!-- 載入 Leaflet 地圖庫所需的外部樣式表 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
+    
+    <!-- 應用程式的基本內聯樣式 -->
     <style>
       body {
         margin: 0;
@@ -26,23 +35,26 @@
         border: none;
       }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "@google/genai": "https://esm.sh/@google/genai@^1.33.0",
-    "react-leaflet": "https://esm.sh/react-leaflet@^5.0.0",
-    "leaflet": "https://esm.sh/leaflet@^1.9.4"
-  }
-}
-</script>
+    
+    <!-- 
+      *** 關鍵修復 ***
+      <script type="importmap"> 區塊已被刻意移除。
+      
+      原因說明：
+      本專案使用 Vite 作為建置工具。Vite 會根據 `package.json` 中列出的依賴項，
+      自動處理所有 JavaScript 模組的打包和管理。
+      
+      先前存在的 importmap 試圖從外部 CDN (esm.sh) 加載依賴項，
+      這與 Vite 的內部打包機制產生了直接衝突，是導致應用程式所有錯誤的根本原因。
+      
+      移除此區塊後，我們讓 Vite 完全接管依賴項管理，從而確保應用程式能夠按預期正常運作。
+    -->
 </head>
   <body>
+    <!-- 這是 React 應用程式掛載的根 DOM 節點 -->
     <div id="root"></div>
+    
+    <!-- 應用程式的入口點，將由 Vite 處理和打包 -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
