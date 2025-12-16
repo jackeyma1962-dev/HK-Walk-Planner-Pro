@@ -1,10 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Route } from '../types';
 
-// FIX: Per @google/genai coding guidelines, initialize GoogleGenAI with process.env.API_KEY
-// and assume it is available in the execution environment. This also fixes the TypeScript error for `import.meta.env`.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const routeSchema = {
   type: Type.ARRAY,
   items: {
@@ -66,6 +62,10 @@ export const getWalkingRoutes = async (
   end: string,
   restIntervalKm: number
 ): Promise<Route[]> => {
+  // FIX: 為了在沙箱環境中解決「Access to storage is not allowed」的錯誤，
+  // 我們在 API 呼叫前才「即時」初始化 GoogleGenAI 客戶端。
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   const prompt = `
     你是一位專業的香港路線規劃師。你的任務是為使用者規劃步行路線。
 
