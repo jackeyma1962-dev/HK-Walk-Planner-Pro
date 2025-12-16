@@ -46,7 +46,7 @@ const RoutePlannerUI: React.FC<RoutePlannerUIProps> = ({
   };
 
   return (
-    <div className="w-full md:w-[420px] shrink-0 md:h-full bg-black/80 text-white p-8 space-y-6 overflow-y-auto shadow-2xl z-10">
+    <div className="w-1/2 md:w-[420px] shrink-0 h-full bg-black/80 text-white p-4 md:p-8 space-y-6 overflow-y-auto shadow-2xl z-10">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-50">香港智能步行路線</h1>
         <p className="text-gray-400 mt-1">規劃您的下一步旅程</p>

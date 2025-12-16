@@ -1,13 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Route } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  console.error("API 金鑰未設定。請在您的部署環境中設定 API_KEY 環境變數。");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+// FIX: Per @google/genai coding guidelines, initialize GoogleGenAI with process.env.API_KEY
+// and assume it is available in the execution environment. This also fixes the TypeScript error for `import.meta.env`.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const routeSchema = {
   type: Type.ARRAY,
@@ -85,7 +81,8 @@ export const getWalkingRoutes = async (
 
   try {
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        // FIX: Upgraded model to gemini-3-pro-preview for better handling of complex tasks like route planning.
+        model: 'gemini-3-pro-preview',
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -94,22 +91,40 @@ export const getWalkingRoutes = async (
     });
 
     const jsonText = response.text;
-    if (!jsonText) {
-      throw new Error("AI 未能提供有效的路線資料。");
+    if (!jsonText || jsonText.trim() === '') {
+      throw new Error("AI 未能提供有效的路線資料 (回應為空)。");
     }
 
-    const routes: Route[] = JSON.parse(jsonText.trim());
+    let routes: any[];
+    try {
+        routes = JSON.parse(jsonText.trim());
+    } catch (parseError) {
+        console.error("JSON 解析失敗:", parseError, "\n原始文字:", jsonText);
+        throw new Error("AI 回應的格式不是有效的 JSON。");
+    }
     
     if (!Array.isArray(routes) || routes.length === 0) {
-      throw new Error("AI 未能提供有效的路線。");
+      throw new Error("AI 成功回應，但未找到可行的路線。");
     }
 
-    return routes;
-  } catch (error) {
-    console.error("調用 Gemini API 時出錯:", error);
-    if (error instanceof Error && error.message.includes('JSON')) {
-        throw new Error("AI 回應的格式無效，無法解析路線。");
+    // 驗證 API 回應的結構，以防止渲染時因缺少關鍵屬性 (如 'path' 或 'restStops') 而崩潰。
+    // 這是導致白畫面的主要原因。
+    for (const route of routes) {
+      if (!route || !Array.isArray(route.path) || !Array.isArray(route.restStops)) {
+        console.error("AI 回應的路線物件結構不完整:", route);
+        throw new Error("AI 提供的路線資料結構不完整，無法顯示。");
+      }
     }
-    throw new Error("無法從 AI 獲取路線建議，請稍後再試。");
+
+    return routes as Route[];
+
+  } catch (error) {
+    console.error("從 Gemini 獲取路線時發生錯誤:", error);
+    // 將捕獲到的錯誤（無論是自定義的還是來自 API 的）傳遞給 UI 層進行顯示
+    if (error instanceof Error) {
+        throw error;
+    }
+    // 備用錯誤
+    throw new Error("無法獲取路線建議，請稍後再試。");
   }
 };

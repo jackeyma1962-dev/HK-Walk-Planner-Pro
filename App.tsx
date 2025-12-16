@@ -39,7 +39,7 @@ function App() {
   };
 
   return (
-    <main className="relative flex flex-col md:flex-row h-screen w-screen font-sans bg-gray-800">
+    <main className="relative flex flex-row h-screen w-screen font-sans bg-gray-800">
       <RoutePlannerUI 
         start={start}
         setStart={setStart}
@@ -53,7 +53,7 @@ function App() {
         routes={routes}
         routesFound={!!routes && routes.length > 0}
       />
-      <div className="flex-1 h-full w-full">
+      <div className="flex-1 h-full">
         <MapDisplay routes={routes} />
       </div>
       
