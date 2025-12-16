@@ -1,14 +1,15 @@
-// FIX: Add a triple-slash directive to include Node.js types. This resolves the
-// TypeScript error for `process.cwd()` by ensuring the full Node.js `process`
-// object type is available in this file's context.
-/// <reference types="node" />
+// FIX: Use a specific import for `cwd` from Node's `process` module. This is
+// a more robust method than using a triple-slash directive, as it explicitly
+// brings in the required function and its type, resolving the TypeScript
+// error for `process.cwd()` without relying on global ambient types.
+import { cwd } from 'node:process'
 
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, cwd(), '')
   return {
     plugins: [react()],
     base: './',
